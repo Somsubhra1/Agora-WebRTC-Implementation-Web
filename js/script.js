@@ -10,6 +10,12 @@ var localTracks = {
   videoTrack: null,
   audioTrack: null,
 };
+
+var localTrackState = {
+  videoTrackEnabled: true,
+  audioTrackEnabled: true,
+};
+
 var remoteUsers = {};
 // Agora client options
 var options = {
@@ -120,4 +126,58 @@ document.getElementById("join-form").addEventListener("submit", async (e) => {
   }
 });
 
+function hideMuteButton() {
+  $("#mute-video").css("display", "none");
+  $("#mute-audio").css("display", "none");
+}
+
+function showMuteButton() {
+  $("#mute-video").css("display", "inline-block");
+  $("#mute-audio").css("display", "inline-block");
+}
+
+async function muteAudio() {
+  if (!localTracks.audioTrack) return;
+  await localTracks.audioTrack.setEnabled(false);
+  localTrackState.audioTrackEnabled = false;
+  $("#mute-audio").text("Unmute Audio");
+}
+
+async function muteVideo() {
+  if (!localTracks.videoTrack) return;
+  await localTracks.videoTrack.setEnabled(false);
+  localTrackState.videoTrackEnabled = false;
+  $("#mute-video").text("Unmute Video");
+}
+
+async function unmuteAudio() {
+  if (!localTracks.audioTrack) return;
+  await localTracks.audioTrack.setEnabled(true);
+  localTrackState.audioTrackEnabled = true;
+  $("#mute-audio").text("Mute Audio");
+}
+
+async function unmuteVideo() {
+  if (!localTracks.videoTrack) return;
+  await localTracks.videoTrack.setEnabled(true);
+  localTrackState.videoTrackEnabled = true;
+  $("#mute-video").text("Mute Video");
+}
+
 document.getElementById("leave").addEventListener("click", (e) => leave());
+
+$("#mute-audio").click(function (e) {
+  if (localTrackState.audioTrackEnabled) {
+    muteAudio();
+  } else {
+    unmuteAudio();
+  }
+});
+
+$("#mute-video").click(function (e) {
+  if (localTrackState.videoTrackEnabled) {
+    muteVideo();
+  } else {
+    unmuteVideo();
+  }
+});
